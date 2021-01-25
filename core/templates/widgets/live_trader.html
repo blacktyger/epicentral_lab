@@ -1,0 +1,188 @@
+{% block content %} {% load crispy_forms_tags %}
+
+<style>
+    .epic_hide {
+        display: none;
+    }
+    .epic_show {
+        display : ;
+    }
+
+    .lds-dual-ring.hidden {
+        display: none;
+    }
+
+    /*Spinner Styles*/
+    .lds-dual-ring {
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+    }
+    .lds-dual-ring:after {
+        content: " ";
+        display: block;
+        width: 64px;
+        height: 64px;
+        margin: 5% auto;
+        border-radius: 50%;
+        border: 6px solid #fff;
+        border-color: #fff transparent #fff transparent;
+        animation: lds-dual-ring 1.2s linear infinite;
+    }
+    @keyframes lds-dual-ring {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+</style>
+
+<form action="trader" id="live_trader" method="POST" class="forms-sample">
+    {% csrf_token %}
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="{{form.amount.auto_id}}">{{form.amount.name.capitalize}}</label>
+            {{form.amount}}
+        </div>
+        <div class="form-group col-md-6">
+            <label for="{{form.side.auto_id}}">{{form.side.name.capitalize}}</label>
+            {{form.side}}
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+             <label for="{{form.pair.auto_id}}">{{form.pair.name.capitalize}}</label>
+            {{form.pair}}
+        </div>
+        <div class="form-group col-md-6">
+            <label for="{{form.exchange.auto_id}}">{{form.exchange.name.capitalize}}</label>
+            {{form.exchange}}
+        </div>
+    </div>
+    <button type="submit" class="btn btn-lg btn-block btn-info mt-3">Submit</button>
+</form>
+<div class="col text-center mt-3">
+    <div id="spinner" class="lds-dual-ring hidden overlay mt-2"></div>
+</div>
+<div class="table-responsive trader_table epic_hide">
+    <table class="table text-secondary">
+        <thead class="mb-3">
+            <tr class="table_head">
+                <th class="th1"></th>
+                <th colspan="2" class="th2 text-right"></th>
+            </tr>
+        </thead>
+        <tbody id="table_body" style="font-size: 1.6rem;">
+            <tr class="tr_start">
+                <td class="td11"></td>
+                <td class="td12"></td>
+                <td class="td13"></td>
+            </tr>
+            <tr class="tr_average">
+                <td class="td21"></td>
+                <td class="td22"></td>
+                <td class="td23"></td>
+            </tr>
+            <tr class="tr_after">
+                <td class="td31"></td>
+                <td class="td32"></td>
+                <td class="td33"></td>
+            </tr>
+            <tr class="tr_total">
+                <td class="td41"></td>
+                <td class="td42"></td>
+                <td class="td43"></td>
+            </tr>
+            <tr class="tr_impact">
+                <td class="td51"></td>
+                <td class="td52">
+                    <div class="progress">
+                        <div class="progress-bar price_impact_bar bg-info" id="price_impact_bar"
+                             role="progressbar" style="width: 10%" aria-valuenow="10"
+                             aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                </td>
+                <td class="td53"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+                crossorigin="anonymous"></script>
+
+<script>
+
+    $(document).on('submit', '#live_trader',function(e){
+        e.preventDefault();
+        var csrf = $('input[name=csrfmiddlewaretoken]').val()
+         // SPINNER ON
+         $('#spinner').removeClass('hidden');
+        $.ajax({
+            type:'POST',
+            url:'{% url "live_trader" %}',
+            data:{
+                quantity:$('#amount_input').val(),
+                exchange:$('#exchange_input').val(),
+                pair:$('#pair_input').val(),
+                side: $('#side_input').val(),
+                csrfmiddlewaretoken: csrf,
+                action: 'trader'
+            },
+            success:function(data) {
+
+                console.log('data');
+                const progressBar = document.querySelector('.progress');
+                const bar = progressBar.querySelector('.price_impact_bar')
+                let progress = data.impact.toFixed(1);
+                if (progress >= 100) {
+                    bar.style.width = '100%';
+                  } else {
+                  console.log(progress)
+                    bar.style.width = progress + '%';
+                  }
+
+                // TABLE HEAD
+                $(".th1").text(data.exchange + " EPIC-" + data.pair);
+                $(".th2").text(data.side + " " + parseFloat($("#amount_input").val()).toLocaleString('en') + " EPIC");
+
+                // TABLE BODY
+                $(".td11").text("Start price: ");
+                $(".td12").text(data.start_price + " " + data.pair);
+                $(".td13").text(data.start_price_counter + " " + data.counter);
+                $(".td21").text("Average price: ");
+                $(".td22").text(data.average + " " + data.pair);
+                $(".td23").text(data.average_counter + " " + data.counter);
+                $(".td31").text("New price: ");
+                $(".td32").text(data.new_price + " " + data.pair);
+                $(".td33").text(data.new_price_counter + " " + data.counter);
+                $(".td41").text("Total: ");
+                $(".td42").text(data.total.toLocaleString('en') + " " + data.pair);
+                $(".td43").text(parseFloat(data.total_counter).toLocaleString('en') + " " + data.counter);
+                $(".td51").text("Impact:");
+                $(".td53").text(parseFloat(data.impact.toFixed(2)).toLocaleString('en') + "%");
+
+                // VISIBLE TABLE
+                $(".trader_table").removeClass('epic_hide');
+
+            },
+            error : function(xhr,errmsg,err) {
+            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            },
+
+            // SPINNER OFF
+            complete: function () {$('#spinner').addClass('hidden')},
+        });
+    });
+
+</script>
+{% endblock content %}
+

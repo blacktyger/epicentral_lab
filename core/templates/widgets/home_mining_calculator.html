@@ -1,0 +1,170 @@
+{% load math %}
+
+<style>
+    .lds-dual-ring.hidden {
+        display: none;
+    }
+    .epic_hide {
+        display: none;
+    }
+
+    .epic_show {
+        display : ;
+    }
+
+    /*Spinner Styles*/
+    .lds-dual-ring {
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+    }
+    .lds-dual-ring:after {
+        content: " ";
+        display: block;
+        width: 64px;
+        height: 64px;
+        margin: 5% auto;
+        border-radius: 50%;
+        border: 6px solid #fff;
+        border-color: #fff transparent #fff transparent;
+        animation: lds-dual-ring 1.2s linear infinite;
+    }
+    @keyframes lds-dual-ring {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<form id="mining_calculator" method="POST" class="forms-sample">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="form-group col-md-6 col-xs-6">
+            <label for="{{form.amount.auto_id}}">Hashrate</label>
+            {{calc_form.rig_hashrate}}
+        </div>
+        <div class="form-group col-md-6 col-xs-6">
+            <label for="{{form.algo.auto_id}}">{{calc_form.algo.name.capitalize}}</label>
+            {{calc_form.algo}}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="{{form.currency.auto_id}}">{{calc_form.currency.name.capitalize}}</label>
+            {{calc_form.currency}}
+        </div>
+        <div class="form-group col-md-6 cost_field">
+            <label for="{{form.pool_fee.auto_id}}">Pool fee</label>
+            {{calc_form.pool_fee}}
+        </div>
+        <div class="form-group col-md-6 cost_button">
+            <label for=""></label>
+            <div class="btn btn-block btn-outline-info" style="height: 38px">Add Costs</div>
+        </div>
+    </div>
+    <div class="form-row ">
+        <div class="form-group col-md-6 cost_field">
+            <label for="{{form.power_consumption.auto_id}}">Power</label>
+            {{calc_form.power_consumption}}
+        </div>
+        <div class="form-group col-md-6 cost_field">
+            <label for="{{form.electricity_cost.auto_id}}">Electricity</label>
+            {{calc_form.electricity_cost}}
+        </div>
+    </div>
+    <div class="row d-flex justify-content-end">
+        <div class="btn cost_field btn-sm remove_cost_btn btn-out-secondary mr-3">Remove costs</div>
+    </div>
+
+    <button type="submit" class="btn btn-lg btn-block btn-warning mt-3">Submit</button>
+</form>
+
+<div class="col text-center mt-3">
+    <div id="loader" class="lds-dual-ring hidden overlay mt-2"></div>
+</div>
+
+<div class="table-responsive table_calculator epic_hide mt-2">
+    <table class="table w-100 text-white" style="font-size: 1.5rem;">
+         <thead class="calc_table_head">
+             <tr>
+                <th class=""><i style="font-size: 1.4rem;" class="mdi mdi-clock-fast"></i></th>
+                <th class="">Reward</th>
+                <th class="">Income</th>
+                <th class="cost_field">Cost</th>
+                <th class="cost_field">Profit</th>
+            </tr>
+        </thead>
+        <tbody id="calc_table_body" style="font-size: 1.6rem;">
+            {% for period in periods %}
+                <tr class="tr_{{period.0}}">
+                    <td class="td_1_{{period.0}}"></td>
+                    <td class="td_2_{{period.0}}"></td>
+                    <td class="td_3_{{period.0}}"></td>
+                    <td class="td_4_{{period.0}} cost_field"></td>
+                    <td class="td_5_{{period.0}} cost_field"></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Hidden field to store data in DOM-->
+<input type="hidden" id="rig_reward_pass" value="1" />
+
+<script>
+
+    $(document).ready(function() {
+        $('.cost_field').addClass('epic_hide')
+    });
+
+    $('.cost_button').click(function() {
+        $('.cost_field').removeClass('epic_hide')
+        $('.cost_button').addClass('epic_hide')
+    });
+
+    $('.remove_cost_btn').click(function() {
+        $('.cost_field').addClass('epic_hide')
+        $('.cost_button').removeClass('epic_hide')
+    });
+
+    $(document).on('submit', '#mining_calculator',function(e){
+        e.preventDefault();
+        // SPINNER ON
+        $('.table_calculator').addClass('epic_hide');
+        $('#loader').removeClass('hidden');
+        var csrf = $('input[name=csrfmiddlewaretoken]').val();
+
+        $.ajax({
+            type:'POST',
+            url:'{% url "ajax_calculator" %}',
+            data:{
+
+                rig_hashrate:$('#rig_hashrate').val(),
+                algo:$('#algo').val(),
+                currency:$('#currency').val(),
+                power_consumption: $('#power_consumption').val(),
+                electricity_cost: $('#electricity_cost').val(),
+                pool_fee: $('#pool_fee').val(),
+                csrfmiddlewaretoken: csrf,
+                action: 'mining'
+            },
+            success:function(data) {
+                $('#rig_reward_pass').val(data.rig_reward);
+                console.log($('#rig_reward_pass').val());
+                {% for period in periods %}
+                    $('.td_1_{{period.0}}').text('{{period.0}}')
+                    $('.td_2_{{period.0}}').text((data.rig_reward * '{{period.1}}').toFixed(2) + " " + 'EPIC')
+                    $('.td_3_{{period.0}}').text((data.rig_income.value * '{{period.1}}').toFixed(2) + " " + data.user_input.currency)
+                    $('.td_4_{{period.0}}').text((data.rig_cost.value * '{{period.1}}').toFixed(2) + " " + data.user_input.currency)
+                    $('.td_5_{{period.0}}').text((data.rig_profit.value * '{{period.1}}').toFixed(2) + " " + data.user_input.currency)
+                {% endfor %}
+
+                $('#loader').addClass('hidden');
+                $('.table_calculator').removeClass('epic_hide');
+
+            }}) });
+
+</script>
