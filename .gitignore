@@ -25,4 +25,4 @@ staticfiles/*
 !staticfiles/.gitkeep 
 .vscode/symbols.json
 */migrations/
-migrations/
+/migrations/*
