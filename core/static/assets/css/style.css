@@ -8729,7 +8729,7 @@ pre {
 .table-dark,
 .table-dark > th,
 .table-dark > td {
-  background-color: #0c0c0c; }
+  background-color: #1D2633; }
 
 .table-dark th,
 .table-dark td,
@@ -9787,7 +9787,7 @@ input[type="button"].btn-block {
   color: #ffffff;
   text-align: left;
   list-style: none;
-  background-color: #191c24;
+  background-color: #1D2633;
   background-clip: padding-box;
   border: 1px solid #2c2e33;
   border-radius: 0.25rem; }
@@ -11399,7 +11399,8 @@ input[type="button"].btn-block {
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: #191c24;
+  background: rgba(0,0,0,0.3);
+
   background-clip: border-box;
   border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0.25rem; }
@@ -15716,7 +15717,8 @@ body,
 html {
   overflow-x: hidden;
   padding-right: 0 !important;
-  background-color: #191c24; }
+  background-color: #1D2633; }
+
 
 *:-moz-full-screen,
 *:-webkit-full-screen,
@@ -15761,7 +15763,8 @@ code {
 
 /* Footer */
 .footer {
-  background: #000000;
+  background: transparent
+  ;
   padding: 20px 1rem;
   transition: all 0.25s ease;
   -moz-transition: all 0.25s ease;
@@ -16661,7 +16664,7 @@ code {
 
 .card-inverse-dark {
   background: rgba(13, 13, 13, 0.2);
-  border: 1px solid #0c0c0c;
+  border: 1px solid #1D2633;
   color: #0a0a0a; }
 
 /* Checkboxes and Radios */
@@ -17142,8 +17145,10 @@ div.tagsinput {
         background: #00d25b;
         -webkit-transform-origin: 50% 250%;
         transform-origin: 50% 250%;
-        -webkit-animation: rota 1.13s linear infinite, opa 3.67s ease-in-out infinite alternate;
-        animation: rota 1.13s linear infinite, opa 3.67s ease-in-out infinite alternate; }
+        -webkit-animation: rota 1.13s linear infinite,
+ opa 3.67s ease-in-out infinite alternate;
+        animation: rota 1.13s linear infinite,
+ opa 3.67s ease-in-out infinite alternate; }
       #pgloading .bokeh li:nth-child(2) {
         top: 50%;
         right: 0;
@@ -17151,8 +17156,10 @@ div.tagsinput {
         background: #fc424a;
         -webkit-transform-origin: -150% 50%;
         transform-origin: -150% 50%;
-        -webkit-animation: rota 1.86s linear infinite, opa 4.29s ease-in-out infinite alternate;
-        animation: rota 1.86s linear infinite, opa 4.29s ease-in-out infinite alternate; }
+        -webkit-animation: rota 1.86s linear infinite,
+ opa 4.29s ease-in-out infinite alternate;
+        animation: rota 1.86s linear infinite,
+ opa 4.29s ease-in-out infinite alternate; }
       #pgloading .bokeh li:nth-child(3) {
         left: 50%;
         bottom: 0;
@@ -17160,8 +17167,10 @@ div.tagsinput {
         background: #ffab00;
         -webkit-transform-origin: 50% -150%;
         transform-origin: 50% -150%;
-        -webkit-animation: rota 1.45s linear infinite, opa 5.12s ease-in-out infinite alternate;
-        animation: rota 1.45s linear infinite, opa 5.12s ease-in-out infinite alternate; }
+        -webkit-animation: rota 1.45s linear infinite,
+ opa 5.12s ease-in-out infinite alternate;
+        animation: rota 1.45s linear infinite,
+ opa 5.12s ease-in-out infinite alternate; }
       #pgloading .bokeh li:nth-child(4) {
         top: 50%;
         left: 0;
@@ -17169,8 +17178,10 @@ div.tagsinput {
         background: #0090e7;
         -webkit-transform-origin: 250% 50%;
         transform-origin: 250% 50%;
-        -webkit-animation: rota 1.72s linear infinite, opa 5.25s ease-in-out infinite alternate;
-        animation: rota 1.72s linear infinite, opa 5.25s ease-in-out infinite alternate; }
+        -webkit-animation: rota 1.72s linear infinite,
+ opa 5.25s ease-in-out infinite alternate;
+        animation: rota 1.72s linear infinite,
+ opa 5.25s ease-in-out infinite alternate; }
 
 @-webkit-keyframes rota {
   from { }
@@ -17358,16 +17369,37 @@ div.tagsinput {
   background: #ffab00;
   color: #ffab00;
   margin: 80px auto;
-  box-shadow: 15px 15px  0 0, -15px -15px  0 0, 15px -15px  0 0, -15px 15px  0 0, 0 15px  0 0, 15px 0  0 0, -15px 0  0 0, 0 -15px 0 0;
+  box-shadow: 15px 15px  0 0,
+ -15px -15px  0 0,
+ 15px -15px  0 0,
+ -15px 15px  0 0,
+ 0 15px  0 0,
+ 15px 0  0 0,
+ -15px 0  0 0,
+ 0 -15px 0 0;
   animation: anim 2s linear infinite; }
 
 @keyframes anim {
   0% {
     -webkit-filter: hue-rotate(0deg); }
   50% {
-    box-shadow: 20px 20px  0 0, -20px -20px  0 0, 20px -20px  0 0, -20px 20px  0 0, 0 10px  0 0, 10px 0  0 0, -10px 0  0 0, 0 -10px 0 0; }
+    box-shadow: 20px 20px  0 0,
+ -20px -20px  0 0,
+ 20px -20px  0 0,
+ -20px 20px  0 0,
+ 0 10px  0 0,
+ 10px 0  0 0,
+ -10px 0  0 0,
+ 0 -10px 0 0; }
   75% {
-    box-shadow: 20px 20px  0 0, -20px -20px  0 0, 20px -20px  0 0, -20px 20px  0 0, 0 10px  0 0, 10px 0  0 0, -10px 0  0 0, 0 -10px 0 0; }
+    box-shadow: 20px 20px  0 0,
+ -20px -20px  0 0,
+ 20px -20px  0 0,
+ -20px 20px  0 0,
+ 0 10px  0 0,
+ 10px 0  0 0,
+ -10px 0  0 0,
+ 0 -10px 0 0; }
   100% {
     transform: rotate(360deg);
     -webkit-filter: hue-rotate(360deg); } }
@@ -19027,7 +19059,7 @@ body.avgrund-active {
     color: #ffffff; }
 
 .fc-external-events .fc-event {
-  background: #191c24;
+  background: #1D2633;
   color: #ffffff;
   border-width: 0 0 0 4px;
   padding: 16px;
@@ -20340,7 +20372,8 @@ div.tagsinput {
 /* Navbar */
 .navbar {
   font-weight: normal;
-  background: #191c24;
+  background: #1D2633;
+
   left: 244px;
   transition: left 0.25s ease;
   -webkit-transition: left 0.25s ease;
@@ -20354,7 +20387,7 @@ div.tagsinput {
     -webkit-transition: width 0.25s ease, background 0.25s ease;
     -moz-transition: width 0.25s ease, background 0.25s ease;
     -ms-transition: width 0.25s ease, background 0.25s ease;
-    background: #191c24;
+    background: #1D2633;
     width: 244px;
     height: 70px; }
     @media (max-width: 991px) {
@@ -20450,7 +20483,7 @@ div.tagsinput {
       .navbar .navbar-menu-wrapper .count-indicator .count-number {
         position: absolute;
         border-radius: 100%;
-        border: 2px solid #191c24; }
+        border: 2px solid #1D2633; }
       .navbar .navbar-menu-wrapper .count-indicator .count-symbol {
         top: 17px;
         right: -3px;
@@ -20591,7 +20624,7 @@ div.tagsinput {
             margin-left: 0;
             margin-right: auto; } }
     .navbar .navbar-menu-wrapper .search input {
-      background: #191c24;
+      background: #1D2633;
       padding: 13px 20px 11px 20px;
       border: 1px solid #2c2e33; }
       .navbar .navbar-menu-wrapper .search input::placeholder {
@@ -20623,7 +20656,10 @@ div.tagsinput {
 /* Sidebar */
 .sidebar {
   min-height: calc(100vh - 70px);
-  background: #191c24;
+  background: #040405;
+background: -webkit-linear-gradient(bottom, #040405, #1D2533);
+background: -moz-linear-gradient(bottom, #040405, #1D2533);
+background: linear-gradient(to top, #040405, #1D2533);
   font-weight: normal;
   padding: 0;
   width: 244px;
@@ -20637,7 +20673,7 @@ div.tagsinput {
     -webkit-transition: width 0.25s ease, background 0.25s ease;
     -moz-transition: width 0.25s ease, background 0.25s ease;
     -ms-transition: width 0.25s ease, background 0.25s ease;
-    background: #191c24;
+    background: #1D2633;
     width: 244px;
     height: 70px; }
     @media (max-width: 991px) {
@@ -20814,7 +20850,7 @@ div.tagsinput {
               .sidebar .nav .nav-item.profile .profile-desc .profile-pic .count-indicator .count-number {
                 position: absolute;
                 border-radius: 100%;
-                border: 2px solid #191c24; }
+                border: 2px solid #1D2633; }
               .sidebar .nav .nav-item.profile .profile-desc .profile-pic .count-indicator .count-symbol {
                 top: 17px;
                 right: -3px;
@@ -21051,7 +21087,7 @@ div.tagsinput {
           left: 70px;
           width: 190px; }
           .sidebar-dark.sidebar-icon-only .sidebar .nav .nav-item.hover-open .collapse, .sidebar-dark.sidebar-icon-only .sidebar .nav .nav-item.hover-open .collapsing {
-            background: #191c24; }
+            background: #1D2633; }
           .rtl.sidebar-icon-only .sidebar .nav .nav-item.hover-open .collapse, .rtl.sidebar-icon-only .sidebar .nav .nav-item.hover-open .collapsing {
             left: auto;
             right: 70px;
@@ -21126,7 +21162,10 @@ div.tagsinput {
       width: 100%; } }
 
 .content-wrapper {
-  background: #000000;
+background: #1D2633;
+background: -webkit-linear-gradient(bottom, #1D2633, #17171E);
+background: -moz-linear-gradient(bottom, #1D2633, #17171E);
+background: linear-gradient(to top, #1D2633, #17171E);
   padding: 1.875rem 1.75rem;
   width: 100%;
   -webkit-flex-grow: 1;

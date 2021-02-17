@@ -1,0 +1,776 @@
+{% load qr_code %} {% load static %}
+<style>
+    .epic_hide_text {
+      white-space: nowrap;
+      width: 12em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 200px;
+    }
+    .epic_hide {
+        display: none;
+    }
+    .epic_show {
+        display : ;
+    }
+    .lds-dual-ring.hidden {
+        display: none;
+    }
+    /*Spinner Styles*/
+    .lds-dual-ring {
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+    }
+    .lds-dual-ring:after {
+        content: " ";
+        display: block;
+        width: 64px;
+        height: 64px;
+        margin: 5% auto;
+        border-radius: 50%;
+        border: 6px solid #fff;
+        border-color: #fff transparent #fff transparent;
+        animation: lds-dual-ring 1.2s linear infinite;
+    }
+    @keyframes lds-dual-ring {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+<!--MAIN FORM -->
+
+<h3 class="card-title text-center font-weight-bold mt-2">
+<!--    <span class="text-warning">EPIC</span><span class="text-white">CASH</span>-->
+    <img class="img mb-3" src="{% static 'imgs/stellar_epic.png' %}" style="opacity: 0.75;">
+
+</h3>
+<form action="" id="stellar_trader" method="POST" class="forms-sample">
+    {% csrf_token %}
+     <div class="form-row d-flex justify-content-center">
+        <div class="form-group col-xs-9 col-sm-11">
+            <div class="input-group-prepend">
+                <div class="input-group-text text-warning">
+                     BUY
+                </div>
+                {{stellar_form.buy}}
+                <div class="input-group-append">
+                    <div class="input-group-text text-warning font-weight-bold">
+                        <span>EPIC</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="vertical text-center">
+            <i class="mdi mdi-arrow-up mx-1"></i>
+            <i class=" mx-1 mdi mdi-arrow-down"></i>
+        </div>
+    <div class="form-row d-flex justify-content-center">
+        <div class="form-group col-xs-9 col-sm-11">
+            <div class="input-group-prepend">
+                <div class="input-group-text text-info">
+                    PAY
+                </div>
+                {{stellar_form.spend}}
+                <div class="input-group-append">
+                    <div class="input-group-text text-info font-weight-bold">
+                        <span>XLM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-row d-flex justify-content-center">
+        <div class="col-xs-7 col-sm-8">
+            <button type="submit" id="buy_button" class="btn btn-lg btn-block btn-info mx-1 my-3">
+                BUY EPIC
+            </button>
+        </div>
+    </div>
+</form>
+
+<!-- SPINNER -->
+<div class="col text-center mt-3">
+    <div id="stellar_spinner" class="lds-dual-ring hidden overlay mt-2"></div>
+</div>
+
+<!-- STELLAR RESULT TABLE-->
+<div class="table-responsive epic_hide" id="stellar_result_table">
+    <table class="table text-secondary">
+        <thead class="mb-3" id="stellar_result_header">
+            <tr class="">
+                <th style="font-size: 1.3rem;">Buy
+                    <i class="ml-2 mdi mdi-information-outline text-light"></i><br>
+                    <span id="result_buy_text"class="text-muted mt-2" style="font-size: 0.8rem;">
+                        estimated
+                    </span>
+                </th>
+                <th colspan="2" style="font-size: 1.3rem;" class="text-right">
+                    <span class="text-warning" id="result_buy"></span><br>
+                    <span id="result_buy_limit"class="text-muted mt-2" style="font-size: 0.8rem;">
+                    </span>
+                </th>
+            </tr>
+            <tr class="">
+                <th style="font-size: 1.2rem;">Pay
+                    <i class="ml-2 mdi mdi-information-outline text-light"></i><br>
+                    <span id="result_pay_text"class="text-muted mt-2" style="font-size: 0.8rem;">
+                        exact amount
+                    </span>
+                </th>
+                <th colspan="2" style="font-size: 1.2rem;"
+                    class="text-right text-info">
+                    <span id="result_pay"></span><br>
+                    <span id="result_pay_usd"class="text-muted mt-2" style="font-size: 0.8rem;"></span>
+                </th>
+            </tr>
+            <tr class="">
+                <th style="font-size: 1.2rem;">Price
+                <i class="ml-2 mdi mdi-information-outline text-light"></i><br>
+                    <span id="resultprice_text"class="text-muted mt-2" style="font-size: 0.8rem;">
+                       average per 1 EPIC
+                    </span>
+                </th>
+                <th colspan="2" style="font-size: 1.2rem;"
+                    class="text-right text-info">
+                    <span id="result_price"></span><br>
+                    <span id="result_price_usd"class="text-muted mt-2" style="font-size: 0.8rem;"></span>
+                </th>
+            </tr>
+        </thead>
+    </table>
+    <div class="text-right">
+        <button class="btn btn-sm mr-3 btn-outline-info my-3"
+                id="stellar_show_details_button" onclick="toggleHide('#stellar_detail_table')">
+            show me more details
+        </button>
+    </div>
+
+    <!-- STELLAR DETAIL TABLE-->
+    <div class="table-responsive epic_hide my-3" id="stellar_detail_table">
+        <table class="table text-secondary">
+            <tbody id="stellar_result_body" style="font-size: 1.6rem;">
+                <tr class="tr_start">
+                    <td class="td11"></td>
+                    <td class="td12"></td>
+                    <td class="td13"></td>
+                </tr>
+                <tr class="tr_average">
+                    <td class="td21"></td>
+                    <td class="td22"></td>
+                    <td class="td23"></td>
+                </tr>
+                <tr class="tr_after">
+                    <td class="td31"></td>
+                    <td class="td32"></td>
+                    <td class="td33"></td>
+                </tr>
+                <tr class="tr_total">
+                    <td class="td41"></td>
+                    <td class="td42"></td>
+                    <td class="td43"></td>
+                </tr>
+                <tr class="tr_impact">
+                    <td class="td51"></td>
+                    <td class="td52">
+                        <div class="progress">
+                            <div class="progress-bar price_impact_bar bg-info" id="price_impact_bar"
+                                 role="progressbar" style="width: 10%" aria-valuenow="10"
+                                 aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                    </td>
+                    <td class="td53"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+        <!--    CONTINUE BUTTON -->
+    <div class="stellar_continue_button text-center my-4">
+        <button type="submit" id="stellar_continue_button"
+                class="btn mt-4 btn-lg btn-warning btn-block btn-info" onclick="toggleHide('#receive_page', '#stellar_continue_button')">
+            Continue
+        </button>
+    </div>
+
+</div>
+
+<!--    RECEIVE PAGE -->
+<div class="card-body epic_hide" id="receive_page" style="font-size: 1.2rem;background-color: rgba(0, 0, 0, 0.13);">
+    <div class="row mb-2 d-flex align-items-center justify-content-center" >
+        <div class="">send EPIC to</div>
+    </div>
+    <div class="form-row my-2 d-flex align-items-center justify-content-center">
+        <div class="form-row my-2 d-flex justify-content-center">
+            <div class="form-group col-xs-6">
+                <button class="btn btn-info"  id="receive_wallet_button">
+                   GUI wallet address</button>
+            </div>
+            <div class="form-group col-xs-6">
+                <button class="btn btn-info" id="receive_keybase_button">
+                    Keybase account</button>
+            </div>
+        </div>
+    </div>
+    <form method="POST" id="receive_confirm" class="forms-sample">
+        {% csrf_token %}
+        <div class="input-group-append" id="stellar_receive_input">
+            <div class="input-group-text" id="receive_method_text">
+                Address:
+            </div>
+            <input type="text" id="receive_input" class="text-white form-control"
+                   placeholder="" required>
+            <div class="input-group-prepend">
+                <div class="btn btn-info mx-1" id="receive_help_button" onclick="toggleHide('#receive_help_text')">
+                    <i class="mdi h4 mdi-help-circle-outline"></i>
+                </div>
+            </div>
+        </div>
+
+        <div id="receive_help_text" class="mt-4 ml-2 epic_hide" style="font-size: 0.8rem;">
+            Provide Epic-Cash wallet address registered in
+            <a href="https://github.com/fastepic/epicwallet">
+                Epic-Cash GUI wallet </a>, or Keybase.io username.
+            <p class="text-right"> <a href="#" class="text-muted">More information</a></p>
+        </div>
+        <button type="submit" id="confirm_buy_button" class="btn mt-4 btn-lg btn-block btn-warning">
+            CONFIRM
+        </button>
+    </form>
+</div>
+
+<!--SEND PAGE-->
+<div class="card-body epic_hide" id="send_page" style="font-size: 1.2rem;background-color: rgba(0, 0, 0, 0.13);">
+    <div class="row d-flex align-items-center justify-content-center">
+        <div class="col-sm-6 mb-3 text-center">
+
+<!--        TIMER -->
+            <div class="col-sm-12 mb-3">
+                <p class="h4 text-muted">
+                    send XLM in 5 min
+                </p>
+                    {% include 'widgets/timer.html' %}
+            </div>
+
+<!--        QR CODE -->
+            <img src="{% qr_url_from_text send_xlm_address size=4 version=4 image_format='png' %}">
+        </div>
+        <div class="col-sm-12">
+            <div class="table-responsive" id="stellar_send_table">
+                <table class="table text-secondary">
+                    <thead class="mb-3" id="stellar_send_header">
+                        <tr class="">
+                            <th style="font-size: 0.9rem;">
+                                <p>STELLAR ADDRESS:</p>
+                                <span id="send_address" class="text-right text-warning"></span>
+                            </th>
+                        </tr>
+                        <tr class="">
+                            <th style="font-size: 0.9rem;">
+                                <p>SEND AMOUNT:</p>
+                                <span id="send_amount" class="text-right text-warning"></span>
+                            </th>
+                        </tr>
+                        <tr class="">
+                            <th style="font-size: 0.9rem;">
+                                <p>MEMO:</p>
+                                <span id="send_memo" class="text-right text-warning"></span>
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <button type="submit" id="confirm_send_button" class="btn mt-4 btn-lg btn-block btn-info">
+                CLICK WHEN DONE
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="card-body epic_hide" id="summary_page">
+    <div class="col text-center mt-3">
+        <span id="loading_text"></span>
+
+    </div>
+</div>
+
+<div class="row epic_hide">
+    <div class="card w-100">
+        <div class="">
+            <label for="text_1" class="mt-4">
+                Or generate new wallet and key's pair
+            </label>
+            <div class="input-group-append mt-2">
+                <button id="text_1">assda</button>
+            </div>
+        </div>
+    </div>
+    <div class="" id="keys_table">
+        <button class="btn btn-info" id="generate_key_btn">Generate</button>
+        <div class="epic_hide_text private_key my-2"></div>
+        <div class="epic_hide_text public_key my-2"></div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+                crossorigin="anonymous"></script>
+
+<script>
+
+    var stellarClicked = 0
+    var receive_method = 'wallet'
+
+    function toggleHide(elem_id, kill=0) {
+        console.log('Clicked' + elem_id);
+        $(elem_id).fadeToggle(700);
+
+        console.log(kill)
+        if (kill !== 0) {
+            console.log('kill trigger')
+            $(kill).addClass('epic_hide');
+        };
+    };
+
+    function goSummaryPage() {
+        toggleHide('#send_page');
+        toggleHide('#receive_page');
+        toggleHide('#stellar_result_table');
+        toggleHide('#summary_page');
+
+        $.ajax({
+            type: "GET",
+            url: '{% url "stellar_transaction" %}',
+            data : {
+                 status: 'user_confirmed'
+                },
+                success:function(data) {
+                    console.log(data)
+                    if (data.status === 'DONE') {
+                       $('#loading_text').html('<i class="far fa-check-circle text-success" style="font-size: 7rem"></i>');
+                    } else {
+                        $('#loading_text').html('<div id="loader-stellar" class="lds-dual-ring overlay mt-2"></div>');
+                    }
+            },
+        });
+
+    };
+
+    $('#confirm_send_button').click(function() {
+        Clock.pause();
+        goSummaryPage()
+    });
+
+    $('#receive_wallet_button').click(function() {
+        receive_method = 'wallet';
+        $(this).prop('active', 'true');
+        $('#receive_method_text').text("Wallet:");
+        $('#receive_help_text').html('Provide Epic-Cash wallet address registered in <a href="https://github.com/fastepic/epicwallet"> Epic-Cash GUI wallet. </a> <p class="text-right"> <a href="#" class="text-muted">More information</a></p>');
+        $('#receive_input').prop('placeholder', " address");
+
+    });
+
+    $('#receive_keybase_button').click(function() {
+        receive_method = 'keybase';
+        $(this).prop('active', 'true');
+        $('#receive_method_text').text("Keybase: ");
+        $('#receive_help_text').html("Please give your Keybase.io unique username, you will have access to bought Epic-Cash coins through communicator.");
+        $('#receive_input').prop('placeholder', " username");
+    });
+
+    $('#confirm_buy_button').click(function() {
+        $('#user_address').toggleClass('epic_hide');
+    });
+
+    $(document).on('submit', '#receive_confirm',function(e){
+        e.preventDefault();
+
+        Clock.restart()
+        var csrf = $('input[name=csrfmiddlewaretoken]').val();
+        currency = "XLM",
+        epic = $('#buy').val(),
+        xlm = $('#spend').val(),
+        receive_input_adr = $('#receive_input').val(),
+        $.ajax({
+            type: "POST",
+            url: '{% url "stellar_transaction" %}',
+            data : {
+                 csrfmiddlewaretoken: csrf,
+                 receive_address: receive_input_adr,
+                 receive_method: receive_method,
+                 epic: epic,
+                 xlm: xlm,
+                },
+                success:function(data) {
+                   console.log(data);
+                   $("#receive_page").toggleClass('epic_hide');
+                   $("#send_page").fadeIn(1000);
+                   $("#send_amount").text(xlm + " XLM" );
+                   $("#send_address").text(data.send_address);
+                   $("#send_memo").text(data.memo);
+                }
+        });
+    });
+
+    $(document).on('submit', '#stellar_trader',function(e){
+        $('#buy_button').addClass('epic_hide');
+        e.preventDefault();
+        updateStellarTableResult()
+        stellarClicked = 1
+    });
+
+    function updateStellarTableResult() {
+
+        // SPINNER ON
+        // $('#stellar_spinner').removeClass('hidden');
+
+        var csrf = $('input[name=csrfmiddlewaretoken]').val();
+        currency = "XLM",
+        buy = $('#buy').val(),
+        spend = $('#spend').val(),
+        $.ajax({
+            type: "POST",
+            url: '{% url "stellar_trader" %}',
+            data : {
+                 csrfmiddlewaretoken: csrf,
+                 currency: currency,
+                 spend: spend,
+                 side: 'buy',
+                 buy: buy,
+                },
+                success:function(data) {
+                    console.log(data);
+                    const progressBar = document.querySelector('.progress');
+                    const bar = progressBar.querySelector('.price_impact_bar')
+                    let progress = data.impact.toFixed(1);
+                    if (progress >= 100) {
+                        bar.style.width = '100%';
+                      } else {
+                      console.log(progress)
+                        bar.style.width = progress + '%';
+                      }
+
+                    // TABLE HEAD
+                    $('#result_buy').text(parseFloat(buy).toLocaleString('en') + " " + " EPIC");
+                    $('#result_pay').text(data.total.toLocaleString('en') + " " + data.pair);
+                    $('#result_pay_usd').text("~ " + parseFloat(data.total_counter).toLocaleString('en') + " " + data.counter);
+                    $('#result_price').text(data.average + " " + data.pair);
+                    $('#result_price_usd').text("~ " + data.average_counter + " " + data.counter);
+
+
+                    // $('.result_buy').text(data.pair + "-EPIC");
+                    // $(".th2").text(data.side + " " + parseFloat($("#buy").val()).toLocaleString('en') + " EPIC");
+
+                    // TABLE BODY
+                    $(".td11").text("Start price: ");
+                    $(".td12").text(data.start_price + " " + data.pair);
+                    $(".td13").text("~ " + data.start_price_counter + " " + data.counter);
+                    $(".td21").text("Average price: ");
+                    $(".td22").text(data.average + " " + data.pair);
+                    $(".td23").text("~ " + data.average_counter + " " + data.counter);
+                    $(".td31").text("New price: ");
+                    $(".td32").text(data.new_price + " " + data.pair);
+                    $(".td33").text("~ " + data.new_price_counter + " " + data.counter);
+                    $(".td41").text("Total: ");
+                    $(".td42").text(data.total.toLocaleString('en') + " " + data.pair);
+                    $(".td43").text("~ " + parseFloat(data.total_counter).toLocaleString('en') + " " + data.counter);
+                    $(".td51").text("Impact:");
+                    $(".td53").text(parseFloat(data.impact.toFixed(2)).toLocaleString('en') + "%");
+
+                    // VISIBLE TABLE
+                    $("#stellar_result_table").fadeIn(1000);
+
+            },
+            error : function(xhr,errmsg,err) {
+            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            },
+
+            // SPINNER OFF
+            //complete: function () {$('#stellar_spinner').addClass('hidden')},
+        });
+    };
+
+
+    function update_spend () {
+        currency = "XLM",
+        spend = $('#spend').val(),
+        $.ajax({
+            type: "GET",
+            url: '{% url "home_xlm_sepic" %}',
+            data : {
+                 currency: currency,
+                 spend: spend,
+                },
+                success:function(data) {
+                    console.log(data);
+                    price = parseFloat(data.value.xlm_to_epic).toFixed(2);
+                    $('#buy').val(price);
+
+                    // UPDATE
+                    if (stellarClicked === 1) {
+                        updateStellarTableResult();
+                    }
+                },
+        });
+    };
+
+// pay / avg = buy
+// avg * buy = pay
+
+    function update_buy () {
+        currency = "EPIC",
+        buy = $('#buy').val(),
+        $.ajax({
+            type: "GET",
+            url: '{% url "home_xlm_sepic" %}',
+            data : {
+                 currency: currency,
+                 buy: buy,
+                },
+                success:function(data) {
+                    console.log(data);
+                    price = parseFloat(data.value.epic_to_xlm).toFixed(2);
+                    $('#spend').val(price);
+
+                    // UPDATE
+                    if (stellarClicked === 1) {
+                        updateStellarTableResult();
+                    }
+                },
+        });
+    };
+
+    $('#spend').keyup(function () {
+        update_spend()
+
+    });
+
+    $('#buy').keyup(function () {
+        update_buy()
+    });
+
+    $(function() {
+        $('.private_key').click(function() {
+            $(this).toggleClass('epic_hide_text');
+        });
+    });
+
+    $(function() {
+        $('.public_key').click(function() {
+            $(this).toggleClass('epic_hide_text');
+        });
+    });
+
+   function generateKey(alg, scope) {
+      return new Promise(function(resolve) {
+        var genkey = crypto.subtle.generateKey(alg, true, scope)
+        genkey.then(function (pair) {
+          resolve(pair)
+        })
+      })
+    }
+
+    function arrayBufferToBase64String(arrayBuffer) {
+      var byteArray = new Uint8Array(arrayBuffer)
+      var byteString = ''
+      for (var i=0; i<byteArray.byteLength; i++) {
+        byteString += String.fromCharCode(byteArray[i])
+      }
+      return btoa(byteString)
+    }
+
+    function base64StringToArrayBuffer(b64str) {
+      var byteStr = atob(b64str)
+      var bytes = new Uint8Array(byteStr.length)
+      for (var i = 0; i < byteStr.length; i++) {
+        bytes[i] = byteStr.charCodeAt(i)
+      }
+      return bytes.buffer
+    }
+
+    function textToArrayBuffer(str) {
+      var buf = unescape(encodeURIComponent(str)) // 2 bytes for each char
+      var bufView = new Uint8Array(buf.length)
+      for (var i=0; i < buf.length; i++) {
+        bufView[i] = buf.charCodeAt(i)
+      }
+      return bufView
+    }
+
+    function arrayBufferToText(arrayBuffer) {
+      var byteArray = new Uint8Array(arrayBuffer)
+      var str = ''
+      for (var i=0; i<byteArray.byteLength; i++) {
+        str += String.fromCharCode(byteArray[i])
+      }
+      return str
+    }
+
+
+    function arrayBufferToBase64(arr) {
+      return btoa(String.fromCharCode.apply(null, new Uint8Array(arr)))
+    }
+
+    function convertBinaryToPem(binaryData, label) {
+      var base64Cert = arrayBufferToBase64String(binaryData)
+      var pemCert = "-----BEGIN " + label + "-----\r\n"
+      var nextIndex = 0
+      var lineLength
+      while (nextIndex < base64Cert.length) {
+        if (nextIndex + 64 <= base64Cert.length) {
+          pemCert += base64Cert.substr(nextIndex, 64) + "\r\n"
+        } else {
+          pemCert += base64Cert.substr(nextIndex) + "\r\n"
+        }
+        nextIndex += 64
+      }
+      pemCert += "-----END " + label + "-----\r\n"
+      return pemCert
+    }
+
+    function convertPemToBinary(pem) {
+      var lines = pem.split('\n')
+      var encoded = ''
+      for(var i = 0;i < lines.length;i++){
+        if (lines[i].trim().length > 0 &&
+            lines[i].indexOf('-BEGIN RSA PRIVATE KEY-') < 0 &&
+            lines[i].indexOf('-BEGIN RSA PUBLIC KEY-') < 0 &&
+            lines[i].indexOf('-END RSA PRIVATE KEY-') < 0 &&
+            lines[i].indexOf('-END RSA PUBLIC KEY-') < 0) {
+          encoded += lines[i].trim()
+        }
+      }
+      return base64StringToArrayBuffer(encoded)
+    }
+
+    function importPublicKey(pemKey) {
+      return new Promise(function(resolve) {
+        var importer = crypto.subtle.importKey("spki", convertPemToBinary(pemKey), signAlgorithm, true, ["verify"])
+        importer.then(function(key) {
+          resolve(key)
+        })
+      })
+    }
+
+    function importPrivateKey(pemKey) {
+      return new Promise(function(resolve) {
+        var importer = crypto.subtle.importKey("pkcs8", convertPemToBinary(pemKey), signAlgorithm, true, ["sign"])
+        importer.then(function(key) {
+          resolve(key)
+        })
+      })
+    }
+
+    function exportPublicKey(keys) {
+      return new Promise(function(resolve) {
+        window.crypto.subtle.exportKey('spki', keys.publicKey).
+        then(function(spki) {
+          resolve(convertBinaryToPem(spki, "RSA PUBLIC KEY"))
+        })
+      })
+    }
+
+    function exportPrivateKey(keys) {
+      return new Promise(function(resolve) {
+        var expK = window.crypto.subtle.exportKey('pkcs8', keys.privateKey)
+        expK.then(function(pkcs8) {
+          resolve(convertBinaryToPem(pkcs8, "RSA PRIVATE KEY"))
+        })
+      })
+    }
+
+    function exportPemKeys(keys) {
+      return new Promise(function(resolve) {
+        exportPublicKey(keys).then(function(pubKey) {
+          exportPrivateKey(keys).then(function(privKey) {
+            resolve({publicKey: pubKey, privateKey: privKey})
+          })
+        })
+      })
+    }
+
+    function signData(key, data) {
+      return window.crypto.subtle.sign(signAlgorithm, key, textToArrayBuffer(data))
+    }
+
+    function testVerifySig(pub, sig, data) {
+      return crypto.subtle.verify(signAlgorithm, pub, sig, data)
+    }
+
+    function encryptData(vector, key, data) {
+      return crypto.subtle.encrypt(
+        {
+          name: "RSA-OAEP",
+          iv: vector
+        },
+        key,
+        textToArrayBuffer(data)
+      )
+    }
+
+    function decryptData(vector, key, data) {
+      return crypto.subtle.decrypt(
+          {
+            name: "RSA-OAEP",
+            iv: vector
+          },
+          key,
+          data
+      )
+    }
+
+    // Test everything
+    var signAlgorithm = {
+      name: "RSASSA-PKCS1-v1_5",
+      hash: {
+        name: "SHA-256"
+      },
+      modulusLength: 2048,
+      extractable: false,
+      publicExponent: new Uint8Array([1, 0, 1])
+    }
+
+    var encryptAlgorithm = {
+      name: "RSA-OAEP",
+      modulusLength: 2048,
+      publicExponent: new Uint8Array([1, 0, 1]),
+      extractable: false,
+      hash: {
+        name: "SHA-256"
+      }
+    }
+    $(document).on('click', '#generate_key_btn',function(e){
+        e.preventDefault();
+        var crypto = window.crypto || window.msCrypto;
+        if (crypto.subtle) {
+            var _signedData;
+            var _data = "test";
+            var scopeSign = ["sign", "verify"];
+            var scopeEncrypt = ["encrypt", "decrypt"];
+            var vector = crypto.getRandomValues(new Uint8Array(16));
+
+            generateKey(signAlgorithm, scopeSign).then(function(pair) {
+                exportPemKeys(pair).then(function(keys) {
+                    console.log(keys.privateKey)
+                    $('.private_key').text(keys.privateKey)
+                    $('.public_key').text(keys.publicKey)
+                })
+            })
+        }
+    })
+
+   function wait(ms){
+       var start = new Date().getTime();
+       var end = start;
+       while(end < start + ms) {
+       end = new Date().getTime();
+       }
+   }
+</script>

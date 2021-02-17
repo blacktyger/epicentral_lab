@@ -31,7 +31,19 @@ class LiveTraderForm(forms.Form):
         }))
 
 
-"""
-<input type="number" class="form-control" id="exampleInputName1"
-                           placeholder="Name">
-"""
+class StellarTraderForm(forms.Form):
+    spend = forms.FloatField(widget=NumberInput(attrs={
+        'class': "form-control text-white",
+        'id': "spend",
+        'placeholder': '0.00',
+        'autocomplete ': 'off',
+        'style': "font-size: 1.2rem;"
+        }), required=False)
+
+    buy = forms.FloatField(widget=NumberInput(attrs={
+        'class': "form-control text-white",
+        'id': "buy",
+        'placeholder': '0.00',
+        'autocomplete ': 'off',
+        'style': "font-size: 1.2rem;"
+        }), required=False)

@@ -7,6 +7,6 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('', live_trader_handler, name='live_trader'),
+    # path('', live_trader_handler, name='live_trader'),
 
     ]

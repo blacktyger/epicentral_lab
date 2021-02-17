@@ -12,8 +12,7 @@
 
     <div class="form-group col-md-2 text-center h3">
         <div class="horizontal hidden-xs hidden-sm">
-            <i class="mdi mdi-arrow-left mx-1"></i>
-            <i class=" mx-1 mdi mdi-arrow-right"></i>
+            =
         </div>
 
         <div class="vertical d-block d-md-none">
@@ -43,7 +42,7 @@
         base = $('#select_base').val(),
         $.ajax({
             type: "GET",
-            url: '{% url "home_currency" %}?currency=' + currency,
+            url: '{% url "home_currency" %}',
             data : {
                  currency:currency,
                  base:base,
@@ -51,7 +50,11 @@
                 success:function(data) {
                     console.log(data);
                     var amount = $('#input_base').val();
-                    price = (amount * data.value).toFixed(2);
+                    if (data.currency === "BTC") {
+                        price = (amount * data.value).toFixed(8);
+                    } else {
+                        price = (amount * data.value).toFixed(2);
+                        };
                     $('#input_currency').val(price);
                 },
         });
@@ -62,7 +65,7 @@
         base = $('#select_base').val(),
         $.ajax({
             type: "GET",
-            url: '{% url "home_currency" %}?currency=' + currency,
+            url: '{% url "home_currency" %}',
             data : {
                  currency:currency,
                  base:base,
@@ -78,11 +81,10 @@
 
     $('#select_currency').on('change', function() {
         currency = $(this).val()
-        update_currency()
         console.log(currency)
     });
 
-    $('#select_base').on('change', function() {
+    $('#select_currency').on('change', function() {
         base = $(this).val()
         update_base()
         console.log(base)

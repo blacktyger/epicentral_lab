@@ -1,24 +1,42 @@
+import datetime
+import time
 from decimal import InvalidOperation, Decimal
+
+import pytz
 from django import template
+from django.utils.timezone import make_aware
+from pytz import NonExistentTimeError, AmbiguousTimeError
+
 from app.db import db
 
 register = template.Library()
 
 
-@register.filter(name='to_epic')
-def to_epic(currency, base="EPIC"):
-    if base == "EPIC":
-        if currency == ('USD' or 'usd' or 'usdt'):
-            return db.epic_vs_usd
-        elif currency == ('BTC' or 'btc' or 'bitcoin'):
-            return db.epic_vs_btc
+def t_s(timestamp):
+    """ Convert different timestamps to datetime object"""
+    try:
+        if len(str(timestamp)) == 13:
+            time = datetime.datetime.fromtimestamp(int(timestamp) / 1000)
+        elif len(str(timestamp)) == 10:
+            time = datetime.datetime.fromtimestamp(int(timestamp))
+        elif len(str(timestamp)) == 16:
+            time = datetime.datetime.fromtimestamp(int(timestamp / 1000000))
+        elif len(str(timestamp)) == 12:
+            time = datetime.datetime.fromtimestamp(int(timestamp.split('.')[0]))
+
         else:
-            for k, v in db.currency.items():
-                if k == currency:
-                    curr_vs_usd = float(v['price'])
-                    return db.epic_vs_usd * curr_vs_usd
-            else:
-                return 1
+            # print(f"{warn_msg} Problems with timestamp: {timestamp}, len: {len(str(timestamp))}")
+            pass
+        try:
+            return make_aware(time)
+
+        except (NonExistentTimeError, AmbiguousTimeError):
+            timezone = pytz.timezone('Europe/London')
+            time = timezone.localize(time, is_dst=False)
+            return time
+
+    except UnboundLocalError as er:
+        return timestamp
 
 
 def d(value, places=8):

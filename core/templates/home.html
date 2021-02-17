@@ -1,4 +1,4 @@
-{% extends "layouts/base.html" %} {% load crispy_forms_tags %}
+{% extends "layouts/base.html" %} {% load crispy_forms_tags %} {% load qr_code %}
 
 
 {% block title %} Dashboard {% endblock %}
@@ -19,48 +19,42 @@
 {% block stylesheets %}{% endblock stylesheets %}
 
 {% block content %}
+{% load plotly_dash %}
+
 <div class="content-wrapper">
     <div class="row">
-        <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10 grid-margin px-4">
+        <div class="col-sm-8 grid-margin px-4">
+            <div class="mb-4">
+                <div class="{% plotly_class name='SimpleExample' %}"
+                     style="height: 100%; width: 100%">
+                    {% plotly_app name='SimpleExample' ratio=0.50 %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8 grid-margin px-4">
             <!-- Blog Post -->
-            <div class="card mb-4">
-                <h3 class="card-title text-center mt-2">Epic converter</h3>
+            <div class="mb-4">
                 <div class="card-body">
                     {% include 'widgets/epic_converter.html' %}
                 </div>
             </div>
         </div>
-        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-5  grid-margin px-4">
-            <!-- Blog Post -->
-            <div class="card mb-4">
-                    <h3 class="card-title text-center mt-2">Mining calculator</h3>
-                <div class="card-body">
-                    {% include 'widgets/home_mining_calculator.html' %}
-                </div>
-                <div class="card-footer">
-                    <p class="card-text">
-                        Epic-Cash mining calculator - estimate your mining earnings with us,
-                        compare hardware's efficiency and profits.
-                    </p>
-                    <a href="#" class="btn btn-primary">Show comments</a>
-                </div>
+    </div>
+    <div class="col-sm-12 col-md-8 col-lg-6 col-xl-4  grid-margin px-4">
+        <!-- Blog Post -->
+        <div class="card mb-4">
+                <h3 class="card-title text-center mt-2">Mining calculator</h3>
+            <div class="card-body">
+                {% include 'widgets/home_mining_calculator.html' %}
             </div>
-        </div>
-
-        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-5 grid-margin px-4">
-            <!-- Blog Post -->
-            <div class="card mb-4">
-                    <h3 class="card-title text-center mt-2">Trading widget</h3>
-                <div class="card-body">
-                    {% include 'widgets/live_trader.html' %}
-                </div>
-                <div class="card-footer">
-                    <p class="card-text">
-                        It's working as real-time price ticker, based on amount of Epi-Cash to sell
-                        and exchange/pair. In future it may be interface for real trades.
-                    </p>
-                    <a href="#" class="btn btn-primary">Show comments</a>
-                </div>
+            <div class="card-footer">
+                <p class="card-text">
+                    Epic-Cash mining calculator - estimate your mining earnings with us,
+                    compare hardware's efficiency and profits.
+                </p>
+                <a href="#" class="btn btn-primary">Show comments</a>
             </div>
         </div>
     </div>
@@ -83,3 +77,12 @@
 <script src="/static/assets/js/dashboard.js"></script>
 
 {% endblock javascripts %}
+
+<!--        <div class="col-sm-12 col-md-8 col-lg-6 col-xl-4 grid-margin px-4">-->
+<!--            &lt;!&ndash; Blog Post &ndash;&gt;-->
+<!--            <div class="card mb-4">-->
+<!--                <div class="card-body">-->
+<!--                    {% include 'widgets/stellar_bridge.html' %}-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->

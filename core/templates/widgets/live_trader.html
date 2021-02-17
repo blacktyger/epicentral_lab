@@ -1,5 +1,3 @@
-{% block content %} {% load crispy_forms_tags %}
-
 <style>
     .epic_hide {
         display: none;
@@ -136,8 +134,7 @@
                 action: 'trader'
             },
             success:function(data) {
-
-                console.log('data');
+                console.log(data);
                 const progressBar = document.querySelector('.progress');
                 const bar = progressBar.querySelector('.price_impact_bar')
                 let progress = data.impact.toFixed(1);
@@ -184,5 +181,4 @@
     });
 
 </script>
-{% endblock content %}
 

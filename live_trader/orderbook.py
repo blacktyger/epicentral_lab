@@ -29,26 +29,26 @@ def orderbook_check(quantity, exchange, pair, side):
             if amount >= required:
                 fill_array.append([price, required])
                 filled += required
-                # print('Order done:', filled)
+                print('Order done:', filled)
                 break
             else:
                 filled += amount
                 fill_array.append([price, amount])
-                # print('Adding: ', amount, ' for ', price)
-                # print('order filled:', filled, ' out of ', ordered, ' ...')
+                print('Adding: ', amount, ' for ', price)
+                print('order filled:', filled, ' out of ', ordered, ' ...')
 
     total_amount = 0
     total_sum = 0
 
-    # print(fill_array)
+    print(fill_array)
 
     for ele in fill_array:
         total_sum += (ele[0] * ele[1])
         total_amount += ele[1]
 
-    # print('START PRICE: ', '{:.8f}'.format(fill_array[0][0]))
-    # print('AVG PRICE: ', '{:.8f}'.format(total_sum / total_amount))
-    # print('NEW PRICE: ', '{:.8f}'.format(fill_array[-1][0]))
+    print('START PRICE: ', '{:.8f}'.format(fill_array[0][0]))
+    print('AVG PRICE: ', '{:.8f}'.format(total_sum / total_amount))
+    print('NEW PRICE: ', '{:.8f}'.format(fill_array[-1][0]))
     return {'average': total_sum / total_amount,
             'total': total_sum,
             'new_price': fill_array[-1][0],

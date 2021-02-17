@@ -12,6 +12,11 @@ colorama==0.4.4
 cryptography==3.3.1
 decorator==4.4.2
 defusedxml==0.6.0
+channels
+daphne
+redis
+django-redis
+channels-redis
 dj-database-url==0.5.0
 Django==3.1.5
 django-allauth==0.44.0
@@ -19,6 +24,7 @@ django-crispy-forms==1.10.0
 django-extensions==3.1.0
 django-shell==1.0.2
 django-tinymce==3.2.0
+django_plotly_dash
 entrypoints==0.3
 gevent==21.1.1
 greenlet==1.0.0
@@ -41,6 +47,7 @@ nbformat==5.1.2
 nest-asyncio==1.4.3
 notebook==6.2.0
 oauthlib==3.1.0
+pandas
 packaging==20.8
 pandocfilters==1.4.3
 parso==0.8.1
@@ -80,3 +87,5 @@ websocket-client==0.57.0
 whitenoise==5.2.0
 zope.event==4.5.0
 zope.interface==5.2.0
+qrcode[pil]
+

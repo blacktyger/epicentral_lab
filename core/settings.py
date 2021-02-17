@@ -8,6 +8,8 @@ from decouple import config
 from unipath import Path
 import dj_database_url
 
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).parent
 CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -30,12 +32,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_plotly_dash.apps.DjangoPlotlyDashConfig',
+    'channels_redis',
+    'channels',
     'mining_calculator',
     'django_extensions',
     'live_trader',
     'crispy_forms',
     'blog',
     'app',
+    'qr_code',
     # 'users.apps.UsersConfig'
     ]
 
@@ -127,3 +133,30 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 STATICFILES_DIRS = (
     os.path.join(CORE_DIR, 'core/static'),
     )
+
+ASGI_APPLICATION = 'core.routing.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379), ],
+            }
+        }
+    }
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django_plotly_dash.finders.DashAssetFinder',
+    'django_plotly_dash.finders.DashComponentFinder'
+    ]
+
+PLOTLY_COMPONENTS = [
+
+    'dash_core_components',
+    'dash_html_components',
+    'dash_renderer',
+
+    'dpd_components'
+    ]
